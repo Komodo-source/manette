@@ -1,56 +1,218 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Jeu Mobile</title>
-  <link rel="stylesheet" href="style2.css">
-  <style>
-    /* Le CSS magique qui cache les écrans inactifs */
-    #login-screen, #waiting-room-screen, #controller-screen { display: none; }
-    .active { display: block !important; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spread Out - Controller</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div id="login-screen" class="active">
-    <h1>Rejoindre la partie</h1>
+    <!--
+    <button id="btn-debug" style="position: absolute; top: 10px; left: 10px; z-index: 9999; padding: 5px 10px; font-size: 12px; background: #333; color: #fff; border: 1px solid #fff; border-radius: 3px; cursor: pointer;">DEBUG</button>
+    <button id="btn-debug-infected" style="position: absolute; top: 10px; left: 80px; z-index: 9999; padding: 5px 10px; font-size: 12px; background: #b00; color: #fff; border: 1px solid #fff; border-radius: 3px; cursor: pointer;">INFECTÉ</button>
+-->
+    <div id="login-screen" class="screen active">
+        <h1>SPREAD OUT</h1>
+        <div class="form-group">
+            <label for="room-code">Code de la partie :</label>
+            <input type="text" id="room-code" placeholder="EX: A5B2" maxlength="4" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="player-name">Nom :</label>
+            <input type="text" id="player-name" placeholder="Votre nom" maxlength="12" autocomplete="off">
+        </div>
+        <button id="btn-join" class="btn">REJOINDRE</button>
+        <p id="login-error" class="error"></p>
     </div>
 
-  <div id="waiting-room-screen">
-    <main>
-      <h1>La partie va commencer !</h1>
-      <h3 id="loading">Chargement 0oo</h3>
-      </main>
-  </div>
+    <div id="waiting-room-screen" class="screen">
+        <div class="wr-shell">
+        <div class="wr-header">
+            <h1>LA PARTIE VA COMMENCER !</h1>
+            <div class="wr-loading" id="wr-load">0oo</div>
+        </div>
 
-  <div id="controller-screen">
+        <div class="wr-body">
+            <div class="wr-map">
+            <h2>Map: Laboratoire</h2>
+            <img src="assets/background.jpg" alt="Map Laboratoire" onerror="this.style.background='#2b2b2b';this.alt=''">
+            </div>
+
+            <div class="wr-chat">
+            <legend>Chat Lobby</legend>
+            <p>S'il vous plait soyez respectueux</p>
+            <div class="wr-msg-input">
+                <input type="text" maxlength="25" placeholder="Votre message" id="message_box">
+                <button onclick="send_message()">✉︎</button>
+            </div>
+            </div>
+        </div>
+
+        <div class="wr-footer">
+            <span>Tips:</span> <span id="wr-tips">Utilisez les bonus a bon escient</span>
+        </div>
+        </div>
     </div>
 
-  <script src="ws_config.js"></script>
-  <script src="controller.js"></script>
-  <script>
 
-    var interval2 = window.setInterval(change_tips, 5500);
-    var intervalID = window.setInterval(loading, 500);
-    const load = document.getElementById("loading");
-    
-    function loading() {
-      if (load.innerText === "Chargement 0oo") load.innerText = "Chargement o0o";
-      else if (load.innerText === "Chargement o0o") load.innerText = "Chargement oo0";
-      else load.innerText = "Chargement 0oo";
-    }
+    <div id="controller-screen" class="screen">
+        <div class="top-bar">
+            <span id="player-display-name">Joueur</span>
+            <span id="connection-status" class="status-dot disconnected"></span>
+        </div>
 
-    function change_tips() {
-      let list_tips = [
-        "Utilisez les bonus à bon escient",
-        "La clé de la victoire est une bonne cohésion d'équipe",
-        "M. Ferey mettez-nous 20, svp", 
-        "En sah, le jeu il est trop bien ~ C.Keller",
-        "Coordonnez-vous entre infectés, c'est important"
-      ];
-      let tips_txt = document.getElementById("tips");
-      if(tips_txt) tips_txt.innerText = "Tips: " + list_tips[Math.floor(Math.random() * list_tips.length)];
-    }
-  </script>
+        <div class="nes-layout">
+            <div class="d-pad-container">
+                <div id="joystick-zone">
+                    <div id="joystick-base">
+                        <div id="joystick-thumb"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <div class="round-btn-group">
+                    <button id="btn-item" class="round-btn b-btn">
+                        <img src="" id="itemEquipee">
+                    </button>
+                    <span class="btn-label" id="label_obj">PAS D'ITEM</span>
+                </div>
+                <div class="round-btn-group">
+                    <button id="btn-emoji" class="round-btn a-btn"></button>
+                    <span class="btn-label">EMOJI</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        #joystick-zone {
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+            user-select: none;
+        }
+        #joystick-base {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: rgb(40 39 39);
+            border: 2px solid rgb(0 0 0);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #joystick-thumb {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #000;
+            border: 2px solid #000;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: background 0.1s;
+            pointer-events: none;
+        }
+        #joystick-thumb.active {
+            background: #111;
+        }
+
+        /* Waiting room styles (repris de style2.css) */
+        #waiting-room-screen main {
+            padding: 1rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        #waiting-room-screen .main_part {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        #waiting-room-screen .right {
+            flex: 1;
+            min-width: 200px;
+        }
+        #waiting-room-screen .right img {
+            max-width: 100%;
+            border-radius: 4px;
+        }
+        #waiting-room-screen .left {
+            flex: 1;
+            min-width: 200px;
+        }
+        #waiting-room-screen .message_input {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        #waiting-room-screen .message_input input {
+            flex: 1;
+        }
+    </style>
+
+    <script>
+
+        const loadEl = document.getElementById('wr-load');
+  setInterval(() => {
+    if (loadEl.textContent === '0oo') loadEl.textContent = 'o0o';
+    else if (loadEl.textContent === 'o0o') loadEl.textContent = 'oo0';
+    else loadEl.textContent = '0oo';
+  }, 500);
+
+  const tips = [
+    "Utilisez les bonus a bon escient",
+    "La clé de la victoire est une bonne cohésion d'équipe",
+    "M.Ferey mettez nous 20, svp",
+    "En sah, le jeu il est trop kaptah ~ C.Keller",
+    "Coordonnez vous entre infecté, c'est important"
+  ];
+  setInterval(() => {
+    tipsEl.textContent = tips[Math.floor(Math.random() * tips.length)];
+  }, 5500);
+
+
+        // ─── Fullscreen ───────────────────────────────────────────────
+        function openFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+        }
+        document.getElementById('btn-join').addEventListener('click', () => {
+            openFullscreen();
+        });
+
+        // ─── Waiting room : animation de chargement & tips ───────────
+        const load = document.getElementById("loading");
+        window.setInterval(() => {
+            if (load.innerText === "0oo")       load.innerText = "o0o";
+            else if (load.innerText === "o0o")  load.innerText = "oo0";
+            else                                load.innerText = "0oo";
+        }, 500);
+
+        const listTips = [
+            "Utilisez les bonus a bon escient",
+            "La clé de la victoire est une bonne cohésion d'équipe",
+            "M.Ferey mettez nous 20, svp",
+            "En sah, le jeu il est trop kaptah ~ C.Keller",
+            "Coordonnez vous entre infecté, c'est important"
+        ];
+        const tipsEl = document.getElementById("tips");
+        window.setInterval(() => {
+            tipsEl.innerText = "Tips: " + listTips[Math.floor(Math.random() * listTips.length)];
+        }, 5500);
+
+
+    </script>
+
+    <script src="ws_config.js"></script>
+
+    <script src="controller.js"></script>
 </body>
 </html>
