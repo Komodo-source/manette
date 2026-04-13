@@ -171,12 +171,25 @@ loginBtn.addEventListener('click', () => {
 // ─── WebSocket ────────────────────────────────────────────────────────────────
 function connectWebSocket(url) {
     try {
-        socket = new WebSocket(url);
+        // Normalize URL: strip trailing slashes and convert http(s) to ws(s) if needed
+        let finalUrl = (url || '').toString().trim();
+        finalUrl = finalUrl.replace(/\/+$/,'');
+        if (!/^wss?:\/\//.test(finalUrl)) {
+            if (/^https?:\/\//.test(finalUrl)) finalUrl = finalUrl.replace(/^http/, 'ws');
+            else finalUrl = 'ws://' + finalUrl;
+        }
+
+        socket = new WebSocket(finalUrl);
 
         socket.onopen = () => {
             console.log("Connected to WebSocket server");
-            // send join request; wait for server 'joined' confirmation
             sendPayload({ type: "join", player_id: playerId, player_name: playerName, room_code: roomCode });
+
+            setInterval(() => {
+                if (socket.readyState === WebSocket.OPEN) {
+                    sendPayload({ type: "ping" });
+                }
+            }, 30000);
         };
 
         socket.onmessage = (event) => {
