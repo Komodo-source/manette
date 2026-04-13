@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>waiting room</title>
+  <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+  <main>
+    <h1>La partie va commencer !</h1>
+    <h3 id="loading">Chargement 0oo</h3>
+    <div class="main_part">
+    <div class="right">
+      <h2>Map: Laboratoire</h2>
+
+      <img src="assets/background.jpg" >
+      <p>Dans un monde où la technologie n'attend que d'évoluer, une équipe de scientifiques d'élites a lancé une expérience très importante pour l'avancée scientifique humaine : Le Projet Spread Out.
+      Cette expérience a pour but d'analyser en temps réel l'instinct de survie humain face à un virus qui se propage à la vitesse de la peste dans un environnement confiné. Les patients, isolés dans une arène hautement sécurisée, doivent faire preuve d'une réactivité sans précédent pour échapper à la contamination.
+      </p>
+    </div>
+
+    <div class="left">
+      <div>
+        <legend>Chat Lobby</legend>
+        <p>S'il vous plait soyez respectueux</p>
+        <div class="message_input">
+          <input type="text" maxlength="50" placeholder="Votre Message" id="message_box">
+          <button>✉︎</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    <footer>
+      <h4 id="tips">Tips: </h4>
+    </footer>
+  </main>
+
+  <script>
+    var interval2 = window.setInterval(change_tips, 5500);
+    var intervalID = window.setInterval(loading, 500);
+    const load = document.getElementById("loading");
+    function loading() {
+      if (load.innerText === "Chargement 0oo"){
+          load.innerText = "Chargement o0o";
+      }else if(load.innerText === "Chargement o0o"){
+        load.innerText = "Chargement oo0"
+      }else{
+        load.innerText = "Chargement 0oo"
+      }
+    }
+
+
+    function change_tips() {
+          let list_tips = ["Utilisez les bonus a bon escient",
+    "La clé de la victoire est une bonne cohésion d'équipe",
+    "M.Ferey mettez nous 20, svp",
+    "En sah, le jeu il est trop kaptah ~ C.Keller",
+    "Coordonnez vous entre infecté, c'est important",
+    "Coordonnez vous entre infecté, c'est important"];
+
+      let tips_txt = document.getElementById("tips");
+      tips_txt.innerText = "Tips: " + list_tips[Math.floor(Math.random() * list_tips.length)];
+    }
+  </script>
+<script src="ws_config.js"></script>
+<script src="controller.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+* {
+  font-family: 'Saira', sans-serif, system-ui;
+  background-color: #111;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+}
+
+.main_part{
+  display: flex;
+  margin-bottom: 8rem;
+  gap: 10rem;
+}
+
+img{
+  width: 30rem;
+  text-align: center;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+}
+
+.right > p {
+  margin:  0 1rem 0 1rem;
+}
+
+.message_input{
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.message_input > input {
+  width: 40rem;
+      padding-left: 1rem;
+  height: 2rem;
+  border: transparent;
+  border: 1px #fff solid;
+}
+
+
+
+main{
+  margin-top: 2rem;
+}
+
+main > h1, h3{
+  text-align: center;
+}
+
+.right{
+  width: 40%;
+  text-align: center;
+}
+
+h3{
+  font-size: 25px;
+
+  margin-top: 1rem;
+  margin-bottom: 1rem ;
+}
+
+button{
+  width: 5rem;
+  height: 2rem;
+  background-color: green;
+  border: 5px green solid;
+}
+
+
+h4{
+  text-align: center;
+}
+
+.left{
+  text-align: center;
+  width: 40%;
+}
+
+fieldset > p {
+  color: grey;
+}
+fieldset{
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+
+footer{
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+}

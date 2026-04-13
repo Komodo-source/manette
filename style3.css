@@ -1,0 +1,81 @@
+*{
+  margin: 0;
+  padding: 0;
+  font-family: 'Saira', sans-serif, system-ui;
+    user-select: none; /* Prevent text selection while playing */
+    -webkit-user-select: none;
+}
+
+html{
+  background-color: #111;
+}
+
+h1{
+  color: #fff;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+button {
+  width: 10rem;
+    height: 3rem;
+    position: fixed;
+    margin-left: 3rem;
+    font-size: 15px;
+    border: 3px solid #c7c7f2;
+    border-radius: 5px;
+    color: rgb(17, 17, 17);
+    /* background-color: transparent; */
+    opacity: 65%;
+    cursor: pointer;
+}
+h2{
+  color: #fff;
+}
+
+.titre_seq{
+  margin-left: 5rem;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+}
+
+.items_infecte{
+      display: flex;
+      margin-left: 5rem;
+      color: #fff;
+      gap: 1rem;
+}
+.item{
+  text-align: center;
+  border: 1px solid #fff;
+  padding: 1rem;
+}
+
+
+.explication{
+  color: #fff;
+  margin-left: 5rem;
+  margin-right: 5rem;
+}
+
+.regle{
+  display: flex;
+  gap: 20rem;
+}
+
+.explication_regle{
+  margin-right: 5rem;
+color: #fff;
+font-size: 25px;
+margin-left: 5rem;
+}
+
+
+.touches{
+  color: #fff;
+}
+
+.touches > p {
+  font-size: 20px;
+  margin-left: 5rem;
+}

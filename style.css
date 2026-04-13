@@ -1,0 +1,447 @@
+:root {
+    --bg-color: #2b2b2b;
+    --nes-gray: #d4d4d4;
+    --nes-dark-gray: #a3a3a3;
+    --nes-red: #bd0303;
+    --nes-dark-red: #fd5757;
+    --nes-black: #1a1a1a;
+    --text-light: #f5f5f5;
+    --accent-blue: #567ced;
+    --accent-green: #0dd30d;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Saira', sans-serif, system-ui;
+    user-select: none; /* Prevent text selection while playing */
+    -webkit-user-select: none;
+}
+
+body {
+    background-color: var(--bg-color);
+
+    color: var(--text-light);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Login Screen --- */
+#login-screen {
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #111;
+}
+
+h1 {
+    color: var(--nes-red);
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 0 var(--nes-black);
+    letter-spacing: 2px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 300px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+    color: var(--nes-gray);
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    background-color: var(--nes-black);
+    border: 2px solid var(--nes-dark-gray);
+    color: var(--text-light);
+    border-radius: 4px;
+
+}
+
+
+#room-code{
+    text-transform: uppercase;
+}
+input:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+}
+
+.btn {
+    background-color: var(--nes-red);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--nes-dark-red);
+    transition: transform 0.1s, box-shadow 0.1s;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 var(--nes-dark-red);
+}
+
+.error {
+    color: #ff4444;
+    margin-top: 15px;
+    height: 20px;
+    font-size: 0.9rem;
+}
+
+/* --- Controller Screen --- */
+#controller-screen {
+    background-color: var(--nes-gray);
+    color: var(--nes-black);
+    position: relative;
+    /* Force landscape on some devices if possible via CSS/orientation */
+}
+
+/* Pour forcer un aspect ratio paysage même si le téléphone est droit, on utilise CSS transform,
+   mais ici on va faire un layout responsive qui s'adapte au mode paysage classique */
+
+@media screen and (orientation: portrait) {
+    #controller-screen {
+        /* Info si jamais le joueur est en portrait, à améliorer plus tard */
+    }
+}
+
+.top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0,0,0,0.1);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.connected { background-color: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+.status-dot.disconnected { background-color: var(--nes-red); box-shadow: 0 0 8px var(--nes-red); }
+
+/* NES Layout Structure */
+.nes-layout {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    height: 100%;
+    margin-top: 1.5rem;
+}
+
+/* D-PAD */
+.d-pad-container {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.d-pad {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.d-btn {
+    position: absolute;
+    background-color: var(--nes-black);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.d-btn:active, .d-btn.active {
+    background-color: #333;
+}
+
+.d-btn.up { top: 0; left: 50px; width: 50px; height: 50px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.d-btn.down { bottom: 0; left: 50px; width: 50px; height: 50px; border-top-left-radius: 0; border-top-right-radius: 0; }
+.d-btn.left { top: 50px; left: 0; width: 50px; height: 50px; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.d-btn.right { top: 50px; right: 0; width: 50px; height: 50px; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+
+.d-pad-center {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--nes-black);
+}
+
+/* Center Buttons (Select/Start) */
+.center-buttons {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    padding-bottom: 20px;
+}
+
+.pill-btn-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pill-btn {
+    width: 60px;
+    height: 20px;
+    background-color: var(--nes-black);
+    border: none;
+    border-radius: 10px;
+    box-shadow: inset -2px -2px 0px rgba(255,255,255,0.2);
+    color: transparent; /* Text inside button is not visible */
+}
+
+.pill-btn:active, .pill-btn.active {
+    transform: translateY(2px);
+    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.5);
+}
+
+.btn-label {
+    margin-top: 5px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--nes-red);
+}
+
+/* Action Buttons (A/B) */
+.action-buttons {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    align-items: center;
+    padding-right: 20px;
+}
+
+.round-btn-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.round-btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: var(--nes-black);
+    border: none;
+    position: relative;
+}
+
+.round-btn:active, .round-btn.active {
+    transform: translateY(4px);
+}
+
+#waiting-room-screen{
+      background-color: #111;
+}
+
+/* Offset the A button slightly higher like real NES */
+.round-btn.a-btn {
+    margin-top: -30px;
+}
+
+
+/*Joystick style*/
+body {
+  width: 100%;
+  background-color: #dedede;
+}
+
+.space-top {
+  padding-top: 10px;
+}
+
+#joystick {
+  height: 300px;
+  width: 300px;
+  border-radius: 300px;
+  -moz-border-radius: 300px;
+  -webkit-border-radius: 300px;
+  text-align: center;
+  background-color: #80d5ff;
+  font: 24px/300px Helvetica, Arial, sans-serif;
+  cursor: all-scroll;
+  user-select: none;
+  z-index: -100;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+
+html {
+    background-color: var(--nes-gray);
+}
+
+
+ * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Saira', sans-serif, system-ui; }
+  body { background: #111; color: #f5f5f5; }
+
+  .wr-shell {
+    background: #111;
+    width: 100%;
+    min-height: 320px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 8px 12px;
+    gap: 6px;
+  }
+
+  .wr-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .wr-header h1 {
+    font-size: 15px;
+    color: #bd0303;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .wr-loading {
+    font-size: 13px;
+    color: #a3a3a3;
+    letter-spacing: 3px;
+    min-width: 36px;
+    text-align: center;
+  }
+
+  .wr-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+
+  .wr-map {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .wr-map h2 {
+    font-size: 11px;
+    color: #a3a3a3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .wr-map img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #2b2b2b;
+    display: block;
+  }
+
+  .wr-chat {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .wr-chat legend {
+    font-size: 11px;
+    color: #a3a3a3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .wr-chat p {
+    font-size: 10px;
+    color: #5f5e5a;
+  }
+
+  .wr-msg-input {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .wr-msg-input input {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 12px;
+    background: #1a1a1a;
+    border: 1.5px solid #3a3a3a;
+    color: #f5f5f5;
+    border-radius: 4px;
+  }
+
+  .wr-msg-input button {
+    padding: 6px 10px;
+    background: #bd0303;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .wr-footer {
+    font-size: 10px;
+    color: #5f5e5a;
+    border-top: 0.5px solid #2b2b2b;
+    padding-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wr-footer span {
+    color: #bd0303;
+    font-weight: 500;
+  }
