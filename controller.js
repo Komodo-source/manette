@@ -158,7 +158,6 @@ loginBtn.addEventListener('click', () => {
     errorText.textContent = "Connexion au serveur...";
     loginBtn.disabled = true;
 
-    // Use WS_SERVER_URL from ws_config.js (must be provided)
     try {
         if (typeof WS_SERVER_URL === 'undefined') throw new Error('WS_SERVER_URL not set (see ws_config.js)');
         connectWebSocket(WS_SERVER_URL);
@@ -195,7 +194,6 @@ function connectWebSocket(url) {
         socket.onmessage = (event) => {
             try {
                 const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-                // Handle 'joined' separately to set UI and start input loop
                 if (data.type === 'joined') {
                     statusDot.classList.remove('disconnected');
                     statusDot.classList.add('connected');
@@ -210,7 +208,6 @@ function connectWebSocket(url) {
                     return;
                 }
 
-                // delegate other messages
                 handleServerMessage(JSON.stringify(data));
             } catch (e) {
                 console.error('Invalid message', e);
@@ -268,8 +265,12 @@ function handleServerMessage(dataStr) {
         const data = JSON.parse(dataStr);
 
         if (data.type === "start") {
-            // ➜ Manette
             showScreen(controllerScreen);
+
+            controllerScreen.style.backgroundColor = "";
+            const labels = document.getElementsByClassName('btn-label');
+            for (let i = 0; i < labels.length; i++) labels[i].style.color = "";
+
             if ("vibrate" in navigator) navigator.vibrate(200);
         }
 
@@ -277,11 +278,18 @@ function handleServerMessage(dataStr) {
             if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
         }
 
-        if (data.type === "role_update" && data.role === "infected") {
-            controllerScreen.style.backgroundColor = "var(--nes-dark-red)";
-            const labels = document.getElementsByClassName('btn-label');
-            for (let i = 0; i < labels.length; i++) labels[i].style.color = "#fff";
-            if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
+        if (data.type === "role_update") {
+            if (data.role === "infected") {
+                controllerScreen.style.backgroundColor = "var(--nes-dark-red)";
+                const labels = document.getElementsByClassName('btn-label');
+                for (let i = 0; i < labels.length; i++) labels[i].style.color = "#fff";
+                if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
+            }
+            else if (data.role === "normal") {
+                controllerScreen.style.backgroundColor = "";
+                const labels = document.getElementsByClassName('btn-label');
+                for (let i = 0; i < labels.length; i++) labels[i].style.color = "";
+            }
         }
 
         if (data.type === "new_item") {
